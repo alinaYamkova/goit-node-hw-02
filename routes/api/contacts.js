@@ -8,7 +8,6 @@ const Contacts = require("../../model");
 // })
 
 router.get("/", async (req, res, next) => {
-  // console.log("Hi");
   try {
     const contact = await Contacts.listContacts();
     return res.json({ status: "success", code: 200, data: { contact } });
@@ -18,7 +17,6 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:id", async (req, res, next) => {
-  // console.log("Hi_id");
   try {
     const contactId = await Contacts.getContactById(req.params.id);
     if (contactId) {
@@ -31,9 +29,11 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  console.log("Post");
   try {
-    const newContact = await Contacts.create(req.body);
+    const newContact = await Contacts.addContact(req.body);
+    if (!newContact) {
+      return res.json({status: "error", code: 400, message: "missing required name field"})
+    }
     return res.status(201).json({ status: "success", code: 201, data: { newContact } });
   } catch (e) {
     next(e);
@@ -41,7 +41,6 @@ router.post("/", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
-  // console.log("Del");
   try {
     const contact = await Contacts.removeContact(req.params.id);
     if (contact) {

@@ -25,19 +25,15 @@ const removeContact = async (id) => {
   const someContact = data.find((el) => el.id === id);
   const contactList = data.filter((el) => el.id !== id);
   await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactList))
-  // console.table(someContact);
-  // console.table(contactList);
-  return someContact;
+  console.table(someContact);
+  return contactList;
 }
 // removeContact("3810901a-267f-4224-8db7-76d8bf854e28")
 
-const addContact = async (name, email, phone) => {
+const addContact = async (body) => {
   const data = await readData()
-  const newContact = { id: uuid(), name, email, phone };
-  console.log(data)
+  const newContact = { id: uuid(), ...body };
   const contactsList = [...data, newContact];
-  // console.log(contactsList)
-  // const list = data.push(newContact)
   await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactsList))
   console.table(contactsList);
   return newContact;
