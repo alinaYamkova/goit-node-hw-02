@@ -23,16 +23,23 @@ const getContactById = async (id) => {
 const removeContact = async (id) => {
   const data = await readData()
   const someContact = data.find((el) => el.id === id);
-  const contactList = data.filter((el) => el.id !== id);
-  await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactList))
-  console.table(someContact);
-  return contactList;
+  if (someContact) {
+    const contactList = data.filter((el) => el.id !== id);
+    await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactList))
+    console.table(someContact);
+    return contactList;
+  }
+  return null;
 }
 // removeContact("3810901a-267f-4224-8db7-76d8bf854e28")
 
 const addContact = async (body) => {
   const data = await readData()
-  const newContact = { id: uuid(), ...body };
+  const newContact = { 
+    id: uuid(), 
+    ...body, 
+    ...(body.favorite ? {} : { isFavorite: false }) 
+  };
   const contactsList = [...data, newContact];
   await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactsList))
   console.table(contactsList);
