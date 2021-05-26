@@ -1,15 +1,58 @@
-// const fs = require('fs/promises')
-// const contacts = require('./contacts.json')
+const { readFile } = require('fs')
+const fs = require('fs/promises')
+const path = require('path')
+const { v4: uuid } = require('uuid')
 
-const listContacts = async () => {}
+const readData = async () => {
+  const data = await fs.readFile(path.join(__dirname, 'contacts.json'), 'utf-8')
+  return JSON.parse (data);
+}
 
-const getContactById = async (contactId) => {}
+const listContacts = async () => {
+  return await readData();
+}
 
-const removeContact = async (contactId) => {}
+const getContactById = async (id) => {
+  const data = await readData()
+  const someContact = data.find((el) => el.id === id);
+  console.table(someContact);
+  return someContact;
+}
 
-const addContact = async (body) => {}
+const removeContact = async (id) => {
+  const data = await readData()
+  const someContact = data.find((el) => el.id === id);
+  if (someContact) {
+    const contactList = data.filter((el) => el.id !== id);
+    await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactList))
+    console.table(someContact);
+    return contactList;
+  }
+  return null;
+}
 
-const updateContact = async (contactId, body) => {}
+const addContact = async (body) => {
+  const data = await readData()
+  const newContact = { 
+    id: uuid(), 
+    ...body, 
+    ...(body.favorite ? {} : { isFavorite: false }) 
+  };
+  const contactsList = [...data, newContact];
+  await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(contactsList))
+  console.table(contactsList);
+  return newContact;
+}
+
+const updateContact = async (id, body) => {
+  const data = await readData()
+  const [result] =  data.filter((el) => el.id === id)
+  if (result) {
+    Object.assign(result, body)
+    await fs.writeFile(path.join(__dirname, 'contacts.json'), JSON.stringify(data))
+  }
+  return result;
+}
 
 module.exports = {
   listContacts,
