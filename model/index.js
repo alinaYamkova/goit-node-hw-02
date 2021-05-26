@@ -2,7 +2,6 @@ const { readFile } = require('fs')
 const fs = require('fs/promises')
 const path = require('path')
 const { v4: uuid } = require('uuid')
-// const contacts = require('./contacts.json')
 
 const readData = async () => {
   const data = await fs.readFile(path.join(__dirname, 'contacts.json'), 'utf-8')
@@ -31,7 +30,6 @@ const removeContact = async (id) => {
   }
   return null;
 }
-// removeContact("3810901a-267f-4224-8db7-76d8bf854e28")
 
 const addContact = async (body) => {
   const data = await readData()
@@ -45,7 +43,6 @@ const addContact = async (body) => {
   console.table(contactsList);
   return newContact;
 }
-// addContact('Morton', 'okl.Fusce.diam@Donec.com', '(111) 738-2360')
 
 const updateContact = async (id, body) => {
   const data = await readData()
