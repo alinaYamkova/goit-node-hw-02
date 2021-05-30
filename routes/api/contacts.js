@@ -8,18 +8,21 @@ const {
 } = require("./validation");
 
 router.get("/", async (req, res, next) => {
+  console.log('Hi-GET')
   try {
-    const contact = await Contacts.listContacts();
-    return res.json({ status: "success", code: 200, data: { contact } });
+    const contacts = await Contacts.listContacts();
+    return res.json({ status: "success", code: 200, data: { contacts } });
   } catch (e) {
     next(e);
   }
 });
 
 router.get("/:id", async (req, res, next) => {
+  console.log('Hi-GET')
   try {
     const contactId = await Contacts.getContactById(req.params.id);
     if (contactId) {
+      console.log(contactId._id.getTimestamp())
       return res.json({ status: "success", code: 200, data: { contactId } });
     }
     return res.json({ status: "error", code: 404, message: "Not found" });
@@ -29,6 +32,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.post("/", validationCreateContact, async (req, res, next) => {
+  console.log('Hi-POST')
   try {
     const newContact = await Contacts.addContact(req.body);
     if (!newContact) {
@@ -47,6 +51,7 @@ router.post("/", validationCreateContact, async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
+  console.log('Hi-DEL')
   try {
     const contact = await Contacts.removeContact(req.params.id);
     if (contact) {
@@ -59,6 +64,7 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 router.put("/:id", validationUpdateContact, async (req, res, next) => {
+  console.log('Hi-PUT')
   try {
     const contact = await Contacts.updateContact(req.params.id, req.body);
     if (contact) {
@@ -71,7 +77,8 @@ router.put("/:id", validationUpdateContact, async (req, res, next) => {
 });
 
 router.patch("/:id/favorite", validationUpdateStatusContact, async (req, res, next) => {
-    try {
+  console.log('Hi-PaTCH')  
+  try {
       const contact = await Contacts.updateContact(req.params.id, req.body);
       if (contact) {
         return res.json({ status: "success", code: 200, data: { contact } });
