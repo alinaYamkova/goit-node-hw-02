@@ -12,14 +12,10 @@ const contactSchema = new Schema(
     phone: {
       type: String,
     },
-    favorite: {
+    isFavorite: {
       type: Boolean,
       default: false,
     },
-  },
-  {
-    versionKey: false,
-    timestamps: true,
   },
   {
     versionKey: false,
@@ -38,6 +34,11 @@ const contactSchema = new Schema(
 contactSchema.virtual('info').get(function () {
   return `This is ${this.name} email: ${this.email} phone: ${this.phone} `;
 });
+
+contactSchema.path('name').validate((value) => {
+  const re = /[A-Z]\w+/g
+  return re.test(String(value))
+})
 
 const Contact = model('contact', contactSchema);
 

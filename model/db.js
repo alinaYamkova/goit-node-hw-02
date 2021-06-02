@@ -6,6 +6,7 @@ const db = mongoose.connect(uriDb, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
+  useFindAndModify: false,
   poolSize: 5,
 });
 
@@ -25,12 +26,5 @@ process.on('SIGINT', async () => {
   })
 });
 
-/* process.on('SIGINT', async () => {
-  const client = await db
-  client.close()
-  console.log('Connection to DB terminated');
-  process.exit(1)
-});
-*/
 
 module.exports = db;

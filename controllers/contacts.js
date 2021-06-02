@@ -1,6 +1,6 @@
 const Contacts = require("../repositories/contacts");
 
-const listContacts =  async (req, res, next) => {
+const listContacts = async (req, res, next) => {
   console.log('GET')
   try {
     const contacts = await Contacts.listContacts();
@@ -13,12 +13,12 @@ const listContacts =  async (req, res, next) => {
   }
 };
 
-const getContactById =  async (req, res, next) => {
+const getContactById = async (req, res, next) => {
   console.log('GET_id')
   try {
     const contactId = await Contacts.getContactById(req.params.id);
     if (contactId) {
-      console.log(contactId._id.getTimestamp())
+      console.log(contactId)
       return res.json({ status: "success", code: 200, data: { contactId } });
     }
     return res.json({ status: "error", code: 404, message: "Not found" });
@@ -66,7 +66,7 @@ const updateContact = async (req, res, next) => {
     if (contact) {
       return res.json({ status: "success", code: 200, data: { contact } });
     }
-    return res.json({ error: "success", code: 404, message: "Not found" });
+    return res.json({ error: "error", code: 404, message: "Not found" });
   } catch (e) {
     next(e);
   }
@@ -76,6 +76,7 @@ const updateContact = async (req, res, next) => {
 module.exports = {
   listContacts, 
   getContactById, 
-  addContact, removeContact, 
+  addContact, 
+  removeContact, 
   updateContact,
 }
