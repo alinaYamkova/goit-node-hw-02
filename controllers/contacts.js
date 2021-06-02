@@ -4,7 +4,10 @@ const listContacts =  async (req, res, next) => {
   console.log('GET')
   try {
     const contacts = await Contacts.listContacts();
-    return res.json({ status: "success", code: 200, data: { contacts } });
+    if (contacts) {
+      return res.json({ status: "success", code: 200, data: { contacts } });
+    }
+    return res.json({ status: "error", code: 404, message: "Not found" });
   } catch (e) {
     next(e);
   }
