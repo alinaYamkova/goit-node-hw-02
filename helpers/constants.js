@@ -1,7 +1,7 @@
-const Gender = {
-  MALE: 'male',
-  FEMALE: 'female',
-  NONE: 'none',
+const Enum = {
+  STARTER: 'starter',
+  PRO: 'pro',
+  BUSINESS: 'business',
 };
 
 const HttpCode = {
@@ -15,4 +15,4 @@ const HttpCode = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
-module.exports = { Gender, HttpCode};
+module.exports = { Enum, HttpCode};

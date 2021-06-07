@@ -1,9 +1,9 @@
 const { Schema, model } = require('mongoose');
-const { Gender } = require('../../helpers/constants');
+const { Enum } = require('../../helpers/constants');
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 8;
 
-const { MALE, FEMALE, NONE } = Gender;
+const { STARTER, PRO, BUSINESS } = Enum;
 
 const userSchema = new Schema(
   {
@@ -14,21 +14,21 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: [true, 'Email is required'],e,
       unique: true,
       validate(value) {
         const re = /\S+@\S+\.\S+/g;
         return re.test(String(value).toLowerCase());
       },
     },
-    gender: {
+    subscription: {
       type: String,
-      enum: [MALE, FEMALE, NONE],
-      default: NONE,
+      enum: ["starter", "pro", "business"],
+      default: "starter"
     },
     password: {
       type: String,
-      required: true,
+      required: [true, 'Password is required'],
     },
     token: {
       type: String,
