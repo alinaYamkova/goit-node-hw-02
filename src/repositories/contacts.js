@@ -1,29 +1,53 @@
-const Contact = require('../model/contact_schema')
+const Contact = require('../model/contact_schema');
 
-const listContacts = async () => {
-  const results = await Contact.find();
-  console.log(results)
+const listContacts = async (userId, query) => {
+  // const results = await Contact.find({ owner: userId }).populate({
+  //   path: 'owner',
+  //   select: 'name email -_id',
+  // });
+  // console.log(results)
+  const {
+    sortBy,
+    sortByDesc,
+    filter,
+    Favorite = null,
+    limit = 5,
+    offset = 0,
+  } = query;
+  const optionsSearch = { owner: userId };
+  if (favorite !== null) {
+    optionsSearch.isFavorite = favorite;
+  }
+  const results = await Contact.paginate(optionsSearch, {
+    limit,
+    offset,
+    sort: {'name': 1},
+    populate: { path: 'owner', select: 'name email -_id' },
+  });
   return results;
 };
 
-const getContactById = async (id) => {
-  const results = await Contact.findOne({ _id: id });
+const getContactById = async (id, userId) => {
+  const results = await Contact.findOne({ _id: id, owner: userId }).populate({
+    path: 'owner',
+    select: 'name email',
+  });
   return results;
 };
 
-const removeContact = async (id) => {
-  const result = await Contact.findOneAndRemove({ _id: id });
+const removeContact = async (id, userId) => {
+  const result = await Contact.findOneAndRemove({ _id: id, ownre: userId });
   return result;
 };
 
-const addContact = async (body) => {
-  const result = await Contact.create(body);
+const addContact = async (userId, body) => {
+  const result = await Contact.create({ owner: userId, ...body });
   return result;
 };
 
-const updateContact = async (id, body) => {
+const updateContact = async (userId, id, body) => {
   const result = await Contact.findOneAndUpdate(
-    { _id: id },
+    { _id: id, owner: userId },
     { ...body },
     { new: true },
   );

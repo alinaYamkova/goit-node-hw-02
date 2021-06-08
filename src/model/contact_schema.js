@@ -1,4 +1,5 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const contactSchema = new Schema(
   {
@@ -39,7 +40,7 @@ const contactSchema = new Schema(
 );
 
 contactSchema.virtual('info').get(function () {
-  return `This is ${this.name} email: ${this.email} phone: ${this.phone} `;
+  return `This is ${this.name} email: ${this.email} phone: ${this.phone}`;
 });
 
 contactSchema.path('name').validate((value) => {
@@ -47,6 +48,7 @@ contactSchema.path('name').validate((value) => {
   return re.test(String(value))
 })
 
+contactSchema.plugin(mongoosePaginate);
 const Contact = model('contact', contactSchema);
 
 module.exports = Contact;

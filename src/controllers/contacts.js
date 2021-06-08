@@ -3,10 +3,10 @@ const Contacts = require("../repositories/contacts");
 const listContacts = async (req, res, next) => {
   console.log('GET');
   try {
-    console.log(req.user);
-    const contacts = await Contacts.listContacts();
+    const userId = req.user.id;
+    const { docs: contacts, ...rest } = await Contacts.listContacts(userId, req.querry);
     if (contacts) {
-      return res.json({ status: "success", code: 200, data: { contacts } });
+      return res.json({ status: "success", code: 200, data: { contacts, ...rest } });
     }
     return res.json({ status: "error", code: 404, message: "Not found" });
   } catch (e) {
@@ -17,7 +17,8 @@ const listContacts = async (req, res, next) => {
 const getContactById = async (req, res, next) => {
   console.log('GET_id');
   try {
-    const contactId = await Contacts.getContactById(req.params.id);
+    const userId = req.user.id;
+    const contactId = await Contacts.getContactById(userId, req.params.id);
     if (contactId) {
       console.log(contactId)
       return res.json({ status: "success", code: 200, data: { contactId } });
@@ -31,7 +32,8 @@ const getContactById = async (req, res, next) => {
 const addContact =  async (req, res, next) => {
   console.log('POST');
   try {
-    const newContact = await Contacts.addContact(req.body);
+    const userId = req.user.id;
+    const newContact = await Contacts.addContact( userId, req.body );
     if (!newContact) {
       return res.json({
         status: "error",
@@ -50,7 +52,8 @@ const addContact =  async (req, res, next) => {
 const removeContact = async (req, res, next) => {
   console.log('DEL');
   try {
-    const contact = await Contacts.removeContact(req.params.id);
+    const userId = req.user.id;
+    const contact = await Contacts.removeContact(userId, req.params.id);
     if (contact) {
       return res.json({ status: "success", code: 200, data: { contact } });
     }
@@ -63,7 +66,8 @@ const removeContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   console.log('PUT');
   try {
-    const contact = await Contacts.updateContact(req.params.id, req.body);
+    const userId = req.user.id;
+    const contact = await Contacts.updateContact(userId, req.params.id, req.body);
     if (contact) {
       return res.json({ status: "success", code: 200, data: { contact } });
     }

@@ -3,7 +3,7 @@ const { Enum } = require('../../helpers/constants');
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 8;
 
-//const { STARTER, PRO, BUSINESS } = Enum;
+const { STARTER, PRO, BUSINESS } = Enum;
 
 const userSchema = new Schema(
   {
@@ -27,7 +27,7 @@ const userSchema = new Schema(
     },
     subscription: {
       type: String,
-      enum: Enum,
+      enum: [STARTER, PRO, BUSINESS],
       default: "starter"
     },
     password: {

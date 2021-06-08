@@ -10,7 +10,7 @@ const register = async (req, res, next) => {
     if (user) {
       return res.status(HttpCode.CONFLICT).json({
         status: 'error',
-        ContentType: application / json,
+       // ContentType: application / json,
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
       });
@@ -19,7 +19,7 @@ const register = async (req, res, next) => {
     const { id, name, email, gender } = await Users.createUser(req.body);
     return res.status(HttpCode.CREATED).json({
       status: 'succes',
-      ContentType: application / json,
+     // ContentType: application / json,
       code: HttpCode.CREATED,
       data: { id, name, email, gender },
     });
@@ -59,11 +59,9 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    const contacts = await Users.listContacts();
-    if (contacts) {
-      return res.json({ status: 'success', code: 200, data: { contacts } });
-    }
-    return res.json({ status: 'error', code: 404, message: 'Not found' });
+    const id = req.user.id;
+    await Users.updateToken(id, null);
+    return res.status(HttpCode.NO_CONTENT).json({});
   } catch (e) {
     next(e);
   }
