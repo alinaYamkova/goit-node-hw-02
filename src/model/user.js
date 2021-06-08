@@ -1,9 +1,9 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, SchemaTypes } = require('mongoose');
 const { Enum } = require('../../helpers/constants');
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 8;
 
-const { STARTER, PRO, BUSINESS } = Enum;
+//const { STARTER, PRO, BUSINESS } = Enum;
 
 const userSchema = new Schema(
   {
@@ -14,16 +14,20 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],e,
+      required: [true, 'Email is required'],
       unique: true,
       validate(value) {
         const re = /\S+@\S+\.\S+/g;
         return re.test(String(value).toLowerCase());
       },
     },
+    owner: {
+      type: SchemaTypes.ObjectId, 
+      ref: 'user',
+    },
     subscription: {
       type: String,
-      enum: ["starter", "pro", "business"],
+      enum: Enum,
       default: "starter"
     },
     password: {

@@ -16,7 +16,9 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    owner: { type: SchemaTypes.ObjectId, ref: 'user' },
+    owner: { 
+      type: SchemaTypes.ObjectId, 
+      ref: 'user' },
     features: {
       type: Array,
       set: (data) => (!data ? [] : data),

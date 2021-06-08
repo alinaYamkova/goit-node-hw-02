@@ -10,6 +10,7 @@ const register = async (req, res, next) => {
     if (user) {
       return res.status(HttpCode.CONFLICT).json({
         status: 'error',
+        ContentType: application / json,
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
       });
@@ -18,6 +19,7 @@ const register = async (req, res, next) => {
     const { id, name, email, gender } = await Users.createUser(req.body);
     return res.status(HttpCode.CREATED).json({
       status: 'succes',
+      ContentType: application / json,
       code: HttpCode.CREATED,
       data: { id, name, email, gender },
     });
@@ -29,29 +31,31 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const user = await Users.findByEmail(req.body.email);
-    console.log("user", user);
+    console.log('user', user);
 
     const isValidPassword = await user?.isValidPassword(req.body.password);
     if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: 'error',
+        ContentType: application / json,
         code: HttpCode.UNAUTHORIZED,
-        message: 'Invalid credentials',
+        message: "Email or password is wrong",
       });
-    };
-    
+    }
+
     const id = user.id;
     const payload = { id };
-    const token = jwt.sign(payload, SECRET_KEY, {expiresIn: '2h'});
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '2h' });
     await Users.updateToken(id, token);
-    return res.json({ status: 'error', code: HttpCode.NOT_FOUND, message: 'Not found' });
-
+    return res.json({
+      status: 'error',
+      code: HttpCode.NOT_FOUND,
+      message: 'Not found',
+    });
   } catch (e) {
     next(e);
   }
 };
-
-
 
 const logout = async (req, res, next) => {
   try {
