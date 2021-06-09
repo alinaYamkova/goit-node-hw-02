@@ -1,4 +1,4 @@
-const Enum = {
+const Subscription = {
   STARTER: 'starter',
   PRO: 'pro',
   BUSINESS: 'business',
@@ -29,4 +29,4 @@ const apiLimiter = {
   },
 };
 
-module.exports = { Enum, HttpCode, apiLimiter };
+module.exports = { Subscription, HttpCode, apiLimiter };

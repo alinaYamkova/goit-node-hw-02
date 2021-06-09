@@ -5,12 +5,11 @@ const listContacts = async (userId, query) => {
   //   path: 'owner',
   //   select: 'name email -_id',
   // });
-  // console.log(results)
   const {
     sortBy,
     sortByDesc,
     filter,
-    Favorite = null,
+    favorite = null,
     limit = 5,
     offset = 0,
   } = query;
@@ -24,12 +23,13 @@ const listContacts = async (userId, query) => {
     limit,
     offset,
     sort: {
-      ...(sortBy ? { [`$sortBy`]: 1 } : {}),
-      ...(sortByDesc ? { [`$sortDesc`]: -1 } : {}),
+      ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
+      ...(sortByDesc ? { [`${sortDesc}`]: -1 } : {}),
     },
     select: filter ? filter.split('|').join(' ') : '',
     populate: { path: 'owner', select: 'name email' },
   });
+  console.log(results);
   return results;
 };
 
@@ -42,7 +42,7 @@ const getContactById = async (id, userId) => {
 };
 
 const removeContact = async (id, userId) => {
-  const result = await Contact.findOneAndRemove({ _id: id, ownre: userId });
+  const result = await Contact.findOneAndRemove({ _id: id, owner: userId });
   return result;
 };
 

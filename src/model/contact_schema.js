@@ -19,7 +19,8 @@ const contactSchema = new Schema(
     },
     owner: { 
       type: SchemaTypes.ObjectId, 
-      ref: 'user' },
+      ref: 'user' 
+    },
     features: {
       type: Array,
       set: (data) => (!data ? [] : data),
@@ -49,6 +50,7 @@ contactSchema.path('name').validate((value) => {
 })
 
 contactSchema.plugin(mongoosePaginate);
+
 const Contact = model('contact', contactSchema);
 
 module.exports = Contact;

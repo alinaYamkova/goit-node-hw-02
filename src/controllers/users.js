@@ -7,21 +7,23 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const register = async (req, res, next) => {
   try {
     const user = await Users.findByEmail(req.body.email);
+
     if (user) {
       return res.status(HttpCode.CONFLICT).json({
         status: 'error',
-       // ContentType: application / json,
+        ContentType: application / json,
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
       });
     }
 
-    const { id, name, email, gender } = await Users.createUser(req.body);
+    const { id, name, email, subscription } = await Users.createUser(req.body);
     return res.status(HttpCode.CREATED).json({
       status: 'succes',
-     // ContentType: application / json,
+      ContentType: application / json,
       code: HttpCode.CREATED,
-      data: { id, name, email, gender },
+      data: { id, name, email, subscription },
+      message: 'New user was created',
     });
   } catch (e) {
     next(e);
@@ -31,8 +33,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const user = await Users.findByEmail(req.body.email);
-    console.log('user', user);
-
+    console.log('user:', user);
     const isValidPassword = await user?.isValidPassword(req.body.password);
     if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
@@ -48,9 +49,9 @@ const login = async (req, res, next) => {
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '2h' });
     await Users.updateToken(id, token);
     return res.json({
-      status: 'error',
-      code: HttpCode.NOT_FOUND,
-      message: 'Not found',
+      status: 'success',
+      code: HttpCode.OK,
+      data: { token },
     });
   } catch (e) {
     next(e);
