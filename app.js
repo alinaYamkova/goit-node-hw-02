@@ -1,21 +1,23 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
-
-const contactsRouter = require("./src/routes/api/Contacts");
-const usersRouter = require("./src/routes/api/Users");
-
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const boolParser = require('express-query-boolean');
+const { HttpCode } = require('./helpers/constants');
+const { apiLimiter} = require('./helpers/constants');
 const app = express();
-const { HttpCode } = require('./helpers/constants')
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
+app.use(helmet());
 app.use(logger(formatsLogger));
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: 10000 }));
+app.use(boolParser());
 
-app.use("/api/contacts", contactsRouter);
-app.use("/api/users", usersRouter);
+app.use('/api/', rateLimit(apiLimiter));
+app.use("/api/", require('./src/routes/api'));
 
 app.use((req, res) => {
   res.status(404).json({ status: "error", code: HttpCode.NOT_FOUND, message: "Not found" });
