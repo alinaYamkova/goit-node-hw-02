@@ -1,9 +1,10 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
-const {Subscription } = require('../../helpers/constants');
+const { Subscription, Gender } = require('../helpers/constants');
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 8;
 
 const { STARTER, PRO, BUSINESS } = Subscription;
+const { MALE, FEMALE, NONE } = Gender;
 
 const userSchema = new Schema(
   {
@@ -29,6 +30,11 @@ const userSchema = new Schema(
       type: String,
       enum: [STARTER, PRO, BUSINESS],
       default: STARTER,
+    },
+    gender: {
+      type: String,
+      enum: [MALE, FEMALE, NONE],
+      default: NONE,
     },
     password: {
       type: String,

@@ -1,5 +1,5 @@
 const Contacts = require('../repositories/contacts');
-const { HttpCode } = require('../../helpers/constants');
+const { HttpCode } = require('../helpers/constants');
 
 const listContacts = async (req, res, next) => {
   console.log('GET');
@@ -7,7 +7,7 @@ const listContacts = async (req, res, next) => {
     const userId = req.user.id;
     const { docs: contacts, ...rest } = await Contacts.listContacts(
       userId,
-      req.querry,
+      req.query,
     );
     if (contacts) {
       return res.json({

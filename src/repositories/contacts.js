@@ -14,23 +14,23 @@ const listContacts = async (userId, query) => {
     offset = 0,
   } = query;
 
-  const optionsSearch = { owner: userId };
+  const optionsSearch = { owner: userId }
   if (favorite !== null) {
     optionsSearch.isFavorite = favorite;
-  };
+  }
 
   const results = await Contact.paginate(optionsSearch, {
     limit,
     offset,
     sort: {
       ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
-      ...(sortByDesc ? { [`${sortDesc}`]: -1 } : {}),
+      ...(sortByDesc ? { [`${sortByDesc}`]: -1 } : {}),
     },
     select: filter ? filter.split('|').join(' ') : '',
     populate: { path: 'owner', select: 'name email' },
-  });
-  console.log(results);
-  return results;
+  })
+
+  return results
 };
 
 const getContactById = async (id, userId) => {

@@ -4,6 +4,12 @@ const Subscription = {
   BUSINESS: 'business',
 };
 
+const Gender = {
+  MALE: 'male',
+  FEMALE: 'female',
+  NONE: 'none',
+};
+
 const HttpCode = {
   OK: 200,
   CREATED: 201,
@@ -29,4 +35,4 @@ const apiLimiter = {
   },
 };
 
-module.exports = { Subscription, HttpCode, apiLimiter };
+module.exports = { Subscription, Gender, HttpCode, apiLimiter };

@@ -1,5 +1,5 @@
 const Users = require('../repositories/users');
-const { HttpCode } = require('../../helpers/constants');
+const { HttpCode } = require('../helpers/constants');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -9,20 +9,21 @@ const register = async (req, res, next) => {
     const user = await Users.findByEmail(req.body.email);
 
     if (user) {
-      return res.status(HttpCode.CONFLICT).json({
+      res.status(HttpCode.CONFLICT).json({
+        contentType: application / json,
         status: 'error',
-        ContentType: application / json,
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
-      });
+      })
+      return; 
     }
 
-    const { id, name, email, subscription } = await Users.createUser(req.body);
+    const { id, name, email, subscription, gender } = await Users.createUser(req.body);
     return res.status(HttpCode.CREATED).json({
+      contentType: application / json,
       status: 'succes',
-      ContentType: application / json,
       code: HttpCode.CREATED,
-      data: { id, name, email, subscription },
+      data: { id, name, email, subscription, gender },
       message: 'New user was created',
     });
   } catch (e) {
@@ -38,7 +39,7 @@ const login = async (req, res, next) => {
     if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: 'error',
-        ContentType: application / json,
+        contentType: application / json,
         code: HttpCode.UNAUTHORIZED,
         message: "Email or password is wrong",
       });
@@ -67,6 +68,7 @@ const logout = async (req, res, next) => {
     next(e);
   }
 };
+
 
 module.exports = {
   register,

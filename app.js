@@ -4,8 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const boolParser = require('express-query-boolean');
-const { HttpCode } = require('./helpers/constants');
-const { apiLimiter } = require('./helpers/constants');
+const { HttpCode } = require('./src/helpers/constants');
+const { apiLimiter } = require('./src/helpers/constants');
 
 const app = express();
 
