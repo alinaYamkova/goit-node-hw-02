@@ -51,6 +51,10 @@ const userSchema = new Schema(
         return gravatar.url(this.email, { size: '250' }, true);
       },
     },
+    idCloudAvatar: {
+      type: String,
+      default: null,
+    },
   },
   {
     versionKey: false,

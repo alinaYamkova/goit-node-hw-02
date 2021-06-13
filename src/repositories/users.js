@@ -22,8 +22,8 @@ const getCurrentUser = async (id) => {
   return { name, email, subscription };
 };
 
-const updateAvatar = async (id, avatar) => {
-  return await User.updateOne({ _id: id }, { avatar });
+const updateAvatar = async (id, avatar, idCloudAvatar = null) => {
+  return await User.updateOne({ _id: id }, { avatar, idCloudAvatar });
 };
 
 

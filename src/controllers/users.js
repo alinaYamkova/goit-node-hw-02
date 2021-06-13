@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
-
-const UploadAvatarService = require('../services/local_upload');
+//const UploadAvatarService = require('../services/local_upload');
+const UploadAvatarService = require('../services/cloud_upload');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -19,11 +19,18 @@ const register = async (req, res, next) => {
         status: 'error',
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
-      })
-      return; 
+      });
+      return;
     }
 
-    const { id, name, email, subscription, gender, avatar } = await Users.createUser(req.body);
+    const {
+      id,
+      name,
+      email,
+      subscription,
+      gender,
+      avatar,
+    } = await Users.createUser(req.body);
     return res.status(HttpCode.CREATED).json({
       // contentType: application / json,
       status: 'succes',
@@ -46,7 +53,7 @@ const login = async (req, res, next) => {
         status: 'error',
         contentType: application / json,
         code: HttpCode.UNAUTHORIZED,
-        message: "Email or password is wrong",
+        message: 'Email or password is wrong',
       });
     }
 
@@ -80,20 +87,23 @@ const current = async (req, res, next) => {
 
     if (user) {
       return res.status(HttpCode.OK).json({
-        status: "success",
+        status: 'success',
         code: HttpCode.OK,
         data: { user },
       });
     }
     next({
       status: HttpCode.UNAUTHORIZED,
-      message: "You are not authorized, please login on your account",
+      message: 'You are not authorized, please login on your account',
     });
   } catch (e) {
     next(e);
   }
 };
 
+/**
+* local upload
+*
 const avatars = async (req, res, next) => {
   try {
     const id = reg.user.id;
@@ -114,6 +124,29 @@ const avatars = async (req, res, next) => {
     });
   } catch (error) {
     next(error)
+  }
+};
+*/
+
+// cloud_upload
+const avatars = async (req, res, next) => {
+  try {
+    const id = reg.user.id;
+    const uploads = new UploadAvatarService();
+    const { idCloudAvatar, avatarUrl } = await uploads.saveAvatar(
+      req.file.path,
+      req.user.idCloudAvatar,
+    );
+    //delete file on folder uploads
+    await fs.unlink(req.file.path);
+    await Users.updateAvatar(id, avatarUrl, idCloudAvatar);
+    res.json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { avatarUrl },
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
