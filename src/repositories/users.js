@@ -1,14 +1,14 @@
 const User = require('../model/user_schema');
 
-const findById = async id => {
+const findById = async (id) => {
   return await User.findById(id);
 };
 
-const findByEmail = async email => {
+const findByEmail = async (email) => {
   return await User.findOne({ email });
 };
 
-const createUser = async body => {
+const createUser = async (body) => {
   const user = new User(body);
   return await user.save();
 };

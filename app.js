@@ -27,19 +27,24 @@ app.use('/api/', require('./src/routes/api'));
 app.use((req, res) => {
   res
     .status(404)
-    .json({ status: 'error', code: HttpCode.NOT_FOUND, message: 'Not found' });
+    .json({ 
+      status: 'error', 
+      code: HttpCode.NOT_FOUND, 
+      message: 'Not found' 
+    });
 });
 
 app.use((err, req, res, next) => {
-  const status = err.status || 500;
-  res.status(status).
-  json({ status: status === 500 ? 'fail' : "error",
-  code: status,
-  message: err.message });
+  const status = err.status || 500
+  res.status(status).json({
+    status: status === 500 ? 'fail' : 'error',
+    code: status,
+    message: err.message,
+  })
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandler Rejection at:', promise, 'reason:', reason)
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason)
 });
 
 module.exports = app;

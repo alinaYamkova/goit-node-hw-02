@@ -1,6 +1,7 @@
 const jimp = require('jimp');
 const path = require('path');
 const fs = require('fs').promises;
+
 const createFolderIsNotExist = require('../helpers/create-folder');
 
 class UploadAvatarService {
@@ -17,7 +18,7 @@ class UploadAvatarService {
         250,
         jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE,
       )
-      .writeAsynk(pathFile);
+      .writeAsync(pathFile);
   }
 
   async saveAvatar({ idUser, file }) {
