@@ -1,29 +1,37 @@
 const Users = require('../repositories/users');
 const { HttpCode } = require('../helpers/constants');
 const jwt = require('jsonwebtoken');
+const fs = require('fs').promises;
 require('dotenv').config();
+
 const SECRET_KEY = process.env.SECRET_KEY;
 
 const register = async (req, res, next) => {
   try {
-    const user = await Users.findByEmail(req.body.email);
+    const newUser = await Users.findByEmail(req.body.email);
 
-    if (user) {
-      res.status(HttpCode.CONFLICT).json({
+    if (newUser) {
+      return res.status(HttpCode.CONFLICT).json({
         contentType: application / json,
         status: 'error',
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
-      })
-      return; 
+      });
     }
 
-    const { id, name, email, subscription, gender } = await Users.createUser(req.body);
+    const {
+      id,
+      name,
+      email,
+      subscription,
+      gender,
+      avatar,
+    } = await Users.createUser(req.body);
+    
     return res.status(HttpCode.CREATED).json({
-      contentType: application / json,
       status: 'succes',
       code: HttpCode.CREATED,
-      data: { id, name, email, subscription, gender },
+      data: { id, name, email, subscription, gender, avatar },
       message: 'New user was created',
     });
   } catch (e) {
@@ -41,7 +49,7 @@ const login = async (req, res, next) => {
         status: 'error',
         contentType: application / json,
         code: HttpCode.UNAUTHORIZED,
-        message: "Email or password is wrong",
+        message: 'Email or password is wrong',
       });
     }
 
@@ -69,9 +77,64 @@ const logout = async (req, res, next) => {
   }
 };
 
+// local upload
+const path = require('path');
+const UploadAvatarService = require('../services/local_upload');
+
+const avatars = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const uploads = new UploadAvatarService(process.env.AVATAR_OF_USERS);
+    const avatarUrl = await uploads.saveAvatar({ idUser: id, file: req.file });
+
+    try {
+      await fs.unlink(path.join(process.env.AVATAR_OF_USERS, req.user.avatar));
+    } catch (e) {
+      console.log(e.message);
+    }
+
+    await Users.updateAvatar(id, avatarUrl);
+    res.json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { avatarUrl },
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+/*
+cloud_upload
+
+const UploadAvatarService = require('../services/cloud_upload');
+const avatars = async (req, res, next) => {
+  try {
+    const id = req.user.id
+    const uploads = new UploadAvatarService('avatars')
+    const { idCloudAvatar, avatarUrl } = await uploads.saveAvatar(
+      req.file.path,
+      req.user.idCloudAvatar,
+    );
+
+    await fs.unlink(req.file.path)
+    await Users.updateAvatar(id, avatarUrl, idCloudAvatar)
+    res.json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { avatarUrl },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+*/
 
 module.exports = {
   register,
   login,
   logout,
+  avatars,
 };

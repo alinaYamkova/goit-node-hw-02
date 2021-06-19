@@ -1,4 +1,5 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
+const gravatar = require('gravatar');
 const { Subscription, Gender } = require('../helpers/constants');
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 8;
@@ -23,7 +24,7 @@ const userSchema = new Schema(
       },
     },
     owner: {
-      type: SchemaTypes.ObjectId, 
+      type: SchemaTypes.ObjectId,
       ref: 'user',
     },
     subscription: {
@@ -44,6 +45,16 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    avatar: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email, { size: '250' }, true)
+      },
+    },
+    idCloudAvatar: {
+      type: String,
+      default: null,
+    },
   },
   {
     versionKey: false,
@@ -53,15 +64,15 @@ const userSchema = new Schema(
 
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
-    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-    this.password = await bcrypt.hash(this.password, salt) ;
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
+    this.password = await bcrypt.hash(this.password, salt)
   }
-  next();
+  next()
 });
 
-userSchema.methods.isValidPassword = async function(password) {
+userSchema.methods.isValidPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
-}
+};
 
 const User = model('user', userSchema);
 
