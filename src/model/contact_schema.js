@@ -29,7 +29,9 @@ const contactSchema = new Schema(
   {
     versionKey: false,
     timestamps: true,
-    toJSON: { virtuals: true },
+    toJSON: { 
+      virtuals: true 
+    },
     toObject: {
       virtuals: true,
       transform: function (doc, ret) {

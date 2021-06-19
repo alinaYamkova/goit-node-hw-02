@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-const isAccessible = path => {
+const isAccessible = (path) => {
   return fs
     .access(path)
     .then(() => true)

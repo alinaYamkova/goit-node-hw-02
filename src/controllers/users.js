@@ -2,26 +2,21 @@ const Users = require('../repositories/users');
 const { HttpCode } = require('../helpers/constants');
 const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
-//const path = require('path');
 require('dotenv').config();
-
-//const UploadAvatarService = require('../services/local_upload');
-const UploadAvatarService = require('../services/cloud_upload');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
 const register = async (req, res, next) => {
   try {
-    const user = await Users.findByEmail(req.body.email);
+    const newUser = await Users.findByEmail(req.body.email);
 
-    if (user) {
-      res.status(HttpCode.CONFLICT).json({
+    if (newUser) {
+      return res.status(HttpCode.CONFLICT).json({
         contentType: application / json,
         status: 'error',
         code: HttpCode.CONFLICT,
         message: 'Email is already used',
       });
-      return;
     }
 
     const {
@@ -32,8 +27,8 @@ const register = async (req, res, next) => {
       gender,
       avatar,
     } = await Users.createUser(req.body);
+    
     return res.status(HttpCode.CREATED).json({
-      // contentType: application / json,
       status: 'succes',
       code: HttpCode.CREATED,
       data: { id, name, email, subscription, gender, avatar },
@@ -82,24 +77,13 @@ const logout = async (req, res, next) => {
   }
 };
 
-const current = async (req, res, next) => {
-  try {
-    const { email, avatarURL, subscription } = req.user;
-
-    return res.json({
-      status: Statuses.success,
-      code: HttpCodes.OK,
-      user: { email, avatarURL, subscription },
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
 // local upload
+const path = require('path');
+const UploadAvatarService = require('../services/local_upload');
+
 const avatars = async (req, res, next) => {
   try {
-    const id = reg.user.id;
+    const id = req.user.id;
     const uploads = new UploadAvatarService(process.env.AVATAR_OF_USERS);
     const avatarUrl = await uploads.saveAvatar({ idUser: id, file: req.file });
 
@@ -125,6 +109,7 @@ const avatars = async (req, res, next) => {
 /*
 cloud_upload
 
+const UploadAvatarService = require('../services/cloud_upload');
 const avatars = async (req, res, next) => {
   try {
     const id = req.user.id
@@ -151,6 +136,5 @@ module.exports = {
   register,
   login,
   logout,
-  current,
   avatars,
 };

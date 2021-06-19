@@ -7,7 +7,7 @@ const upload = require('../../../helpers/upload');
 router.post('/register', ctrl.register);
 router.post('/login', ctrl.login);
 router.post('/logout', guard, ctrl.logout);
-router.get('/current', guard, ctrl.current);
 router.patch('/avatars', guard, upload.single('avatar'), ctrl.avatars);
+
 
 module.exports = router;

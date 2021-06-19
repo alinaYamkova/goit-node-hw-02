@@ -1,4 +1,4 @@
-/*
+
 const { promisify } = require('util');
 require('dotenv').config();
 
@@ -26,4 +26,4 @@ class UploadService {
 
 module.exports = UploadService;
 
-*/
+

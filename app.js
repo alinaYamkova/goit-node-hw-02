@@ -5,8 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const boolParser = require('express-query-boolean');
 const path = require('path');
-const { HttpCode } = require('./src/helpers/constants');
-const { apiLimiter } = require('./src/helpers/constants');
+const { HttpCode, apiLimiter } = require('./src/helpers/constants');
 require('dotenv').config();
 const AVATAR_OF_USERS = process.env.AVATAR_OF_USERS;
 
@@ -26,25 +25,21 @@ app.use('/api/', require('./src/routes/api'));
 
 app.use((req, res) => {
   res
-    .status(404)
-    .json({ 
-      status: 'error', 
-      code: HttpCode.NOT_FOUND, 
-      message: 'Not found' 
-    });
+    .status(HttpCode.NOT_FOUND)
+    .json({ status: 'error', code: HttpCode.NOT_FOUND, message: 'Not found' });
 });
 
 app.use((err, req, res, next) => {
-  const status = err.status || 500
-  res.status(status).json({
-    status: status === 500 ? 'fail' : 'error',
-    code: status,
+  const statusCode = err.status || HttpCode.INTERNAL_SERVER_ERROR;
+  res.status(statusCode).json({
+    status: statusCode === HttpCode.INTERNAL_SERVER_ERROR ? 'fail' : 'error',
+    code: statusCode,
     message: err.message,
-  })
+  });
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandled Rejection at:', promise, 'reason:', reason)
+process.on("unhandledRejection", (reason, promise) => {
+  console.log("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
 module.exports = app;
