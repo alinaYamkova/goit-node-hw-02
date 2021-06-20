@@ -1,8 +1,10 @@
-const Users = require('../repositories/users');
-const { HttpCode } = require('../helpers/constants');
 const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
+const Users = require('../repositories/users');
+const { HttpCode } = require('../helpers/constants');
 require('dotenv').config();
+const EmailService = require('../services/email');
+const { CreateSenderSandGrid } = require('../services/email-sender');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -26,8 +28,19 @@ const register = async (req, res, next) => {
       subscription,
       gender,
       avatar,
+      verifyToken,
     } = await Users.createUser(req.body);
-    
+
+    try {
+      const emailService = new EmailService(
+        process.env.NODE_ENV,
+        new CreateSenderSandGrid(),
+      );
+      await emailService.sendVerifyEmail(verifyToken, email, name);
+    } catch (error) {
+      console.log(error.message);
+    }
+
     return res.status(HttpCode.CREATED).json({
       status: 'succes',
       code: HttpCode.CREATED,
@@ -44,7 +57,7 @@ const login = async (req, res, next) => {
     const user = await Users.findByEmail(req.body.email);
     console.log('user:', user);
     const isValidPassword = await user?.isValidPassword(req.body.password);
-    if (!user || !isValidPassword) {
+    if (!user || !isValidPassword || !user.isVerified) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: 'error',
         contentType: application / json,
@@ -99,12 +112,10 @@ const avatars = async (req, res, next) => {
       code: HttpCode.OK,
       data: { avatarUrl },
     });
-
   } catch (error) {
     next(error);
   }
 };
-
 
 /*
 cloud_upload
