@@ -8,7 +8,9 @@ router.post('/register', ctrl.register);
 router.post('/login', ctrl.login);
 router.post('/logout', guard, ctrl.logout);
 router.patch('/avatars', guard, upload.single('avatar'), ctrl.avatars);
-// router.post('/verify/:', guard, ctrl.logout);
+
+router.get('/verify/:token', ctrl.verify);
+router.post('/verify', ctrl.repeatEmailVerification);
 
 
 module.exports = router;

@@ -47,9 +47,7 @@ class EmailService {
           "Need help, or have questions? Just reply to this email, we'd love to help.",
       },
     };
-    
-    const emailBody = mailGenerator.generate(email);
-    return emailBody;
+    return mailGenerator.generate(email);
   }
 
   async sendVerifyEmail(verifyToken, email, name) {

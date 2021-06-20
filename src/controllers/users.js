@@ -117,8 +117,7 @@ const avatars = async (req, res, next) => {
   }
 };
 
-/*
-cloud_upload
+/*  // cloud_upload
 
 const UploadAvatarService = require('../services/cloud_upload');
 const avatars = async (req, res, next) => {
@@ -143,9 +142,82 @@ const avatars = async (req, res, next) => {
 };
 */
 
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerifyToken(req.params.token);
+
+    if (user) {
+      await Users.updateTokenVerify(user.id, true, null);
+      return res.json({
+        status: 'success',
+        code: HttpCode.OK,
+        message: 'Verification successful!',
+      });
+    }
+
+    return res.status(HttpCode.BAD_REQUST).json({
+      status: 'error',
+      contentType: application / json,
+      code: HttpCode.BAD_REQUST,
+      message: 'Verification token is not valid',
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+const repeatEmailVerification = async (req, res, next) => {
+  try {
+    const user = await Users.findByEmail(req.body.email);
+
+    if (user) {
+      const { name, email, isVerified, verifyToken } = user;
+
+      if (!email) {
+        return res.status(HttpCode.BAD_REQUST).json({
+          status: 'error',
+          code: HttpCode.BAD_REQUST ,
+          "message": "missing required field email"
+        });
+      };
+
+      if (!isVerified) {
+        const emailService = new EmailService(
+          process.env.NODE_ENV,
+          new CreateSenderSandGrid(),
+        );
+        await emailService.sendVerifyEmail(verifyToken, email, name);
+        return res.json({
+          status: 'success',
+          code: HttpCode.OK,
+          message: 'Verification email sent!',
+        });
+      };
+
+      return res.status(HttpCode.BAD_REQUST).json({
+        status: 'error',
+        code: HttpCode.BAD_REQUST,
+        message: 'Verification has already been passed',
+      });
+    };
+
+    return res.status(HttpCode.NOT_FOUND).json({
+      status: 'error',
+      code: HttpCode.NOT_FOUND,
+      message: 'User not found',
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
   avatars,
+  verify,
+  repeatEmailVerification,
 };
