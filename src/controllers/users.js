@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
+const EmailService = require('../services/email');
 const Users = require('../repositories/users');
 const { HttpCode } = require('../helpers/constants');
+const { CreateSenderSendGrid, CreateSenderNodemailer } = require('../services/email-sender');
 require('dotenv').config();
-const EmailService = require('../services/email');
-const { CreateSenderSandGrid } = require('../services/email-sender');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -34,7 +34,8 @@ const register = async (req, res, next) => {
     try {
       const emailService = new EmailService(
         process.env.NODE_ENV,
-        new CreateSenderSandGrid(),
+        new CreateSenderSendGrid(),
+        // new CreateSenderNodemailer(),
       );
       await emailService.sendVerifyEmail(verifyToken, email, name);
     } catch (error) {
@@ -185,7 +186,8 @@ const repeatEmailVerification = async (req, res, next) => {
       if (!isVerified) {
         const emailService = new EmailService(
           process.env.NODE_ENV,
-          new CreateSenderSandGrid(),
+          new CreateSenderSendGrid(),
+          // new CreateSenderNodemailer(),
         );
         await emailService.sendVerifyEmail(verifyToken, email, name);
         return res.json({
