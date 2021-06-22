@@ -1,9 +1,9 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
 const gravatar = require('gravatar');
-const { Subscription, Gender } = require('../helpers/constants');
 const bcrypt = require('bcryptjs');
+const { v4: uuid } = require('uuid');
+const { Subscription, Gender } = require('../helpers/constants');
 const SALT_WORK_FACTOR = 8;
-
 const { STARTER, PRO, BUSINESS } = Subscription;
 const { MALE, FEMALE, NONE } = Gender;
 
@@ -54,6 +54,15 @@ const userSchema = new Schema(
     idCloudAvatar: {
       type: String,
       default: null,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    verifyToken: {
+      type: String,
+      require: true,
+      default: uuid(),
     },
   },
   {
